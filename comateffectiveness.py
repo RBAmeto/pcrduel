@@ -67,7 +67,7 @@ async def gift_help(bot, ev: CQEvent):
                     }
             }
     tas_list.append(data)
-await bot.send_group_forward_msg(group_id=ev['group_id'], messages=tas_list)
+    await bot.send_group_forward_msg(group_id=ev['group_id'], messages=tas_list)
 
 @sv.on_prefix(['绑定女友'])
 async def card_bangdin(bot, ev: CQEvent):
@@ -162,7 +162,7 @@ async def rank_list(bot, ev: CQEvent):
             }
     }
     tas_list.append(data)
-await bot.send_group_forward_msg(group_id=ev['group_id'], messages=tas_list)
+    await bot.send_group_forward_msg(group_id=ev['group_id'], messages=tas_list)
 
 
 @sv.on_prefix(['升级rank','rank升级','提升rank'])
@@ -317,7 +317,7 @@ async def girl_power_rank(bot, ev: CQEvent):
             }
     }
     tas_list.append(data)
-await bot.send_group_forward_msg(group_id=ev['group_id'], messages=tas_list)
+    await bot.send_group_forward_msg(group_id=ev['group_id'], messages=tas_list)
     
 @sv.on_fullmatch(['副本系统帮助','副本帮助','装备帮助'])
 async def dun_help(bot, ev: CQEvent):
@@ -344,7 +344,7 @@ async def dun_help(bot, ev: CQEvent):
             }
     }
     tas_list.append(data)
-await bot.send_group_forward_msg(group_id=ev['group_id'], messages=tas_list)
+    await bot.send_group_forward_msg(group_id=ev['group_id'], messages=tas_list)
 
 @sv.on_fullmatch(['副本列表','查看副本'])
 async def dungeon_list(bot, ev: CQEvent):
@@ -951,7 +951,7 @@ async def equip_shop(bot, ev: CQEvent):
                     }
             tas_list.append(data)
             #await bot.send(ev, msg)
-    await bot.send_group_forward_msg(group_id=ev['group_id'], messages=tas_list)
+            await bot.send_group_forward_msg(group_id=ev['group_id'], messages=tas_list)
 
 @sv.on_prefix(['兑换装备'])
 async def buy_equip(bot, ev: CQEvent):
@@ -2106,7 +2106,7 @@ async def gecha_help(bot, ev: CQEvent):
                     }
            }
     tas_list.append(data)
-await bot.send_group_forward_msg(group_id=ev['group_id'], messages=tas_list)
+    await bot.send_group_forward_msg(group_id=ev['group_id'], messages=tas_list)
 
 @sv.on_fullmatch(['查看武器池','武器池'])
 async def get_equipgecha(bot, ev: CQEvent):
@@ -2788,7 +2788,7 @@ async def star_help(bot, ev: CQEvent):
                     }
             }
     tas_list.append(data)
-await bot.send_group_forward_msg(group_id=ev['group_id'], messages=tas_list)
+    await bot.send_group_forward_msg(group_id=ev['group_id'], messages=tas_list)
     
     
 @sv.on_prefix(['角色转生'])
