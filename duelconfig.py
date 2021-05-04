@@ -9,7 +9,8 @@ from io import BytesIO
 from PIL import Image
 from hoshino import Service, priv
 from hoshino.modules.priconne import _pcr_data
-from hoshino.modules.priconne import chara
+from hoshino.modules.priconne import _dlc_data
+from hoshino.modules.priconne import duel_chara as chara
 from hoshino.typing import CQEvent
 from hoshino.util import DailyNumberLimiter
 import copy
@@ -48,7 +49,7 @@ Zhuan_Need = 0.2 #转账所需的手续费比例
 WinSWBasics = 400 #赢了获得的基础声望
 LoseSWBasics = 150 #输了掉的基础声望
 
-Remake_allow = False #是否允许重开
+Remake_allow = True #是否允许重开
 
 SW_COST = 500 #声望招募的声望需求量
 DJ_NEED_SW = 2500 #加冕称帝消耗的声望
@@ -78,7 +79,7 @@ QD_SW_Cele_Num = 2 #签到庆典声望倍率
 Suo_Cele = 1 #群庆典初始化时，是否开启梭哈倍率庆典
 Suo_Cele_Num = 1 #梭哈额外倍率，实际获得梭哈倍率为梭哈庆典倍率*基础倍率
 #免费招募庆典
-FREE_DAILY = 1 #群庆典初始化时，是否开启免费招募庆典
+FREE_DAILY = 0 #群庆典初始化时，是否开启免费招募庆典
 FREE_DAILY_LIMIT = 1  # 每天免费招募的次数
 #限时开放声望招募
 SW_add = 0 #群庆典初始化时，是否开启无限制等级声望招募
@@ -311,39 +312,76 @@ def save_dlc_switch():
     with open(os.path.join(FILE_PATH,'dlc_config.json'),'w',encoding='UTF-8') as f:
         json.dump(dlc_switch,f,ensure_ascii=False)
 
-bldalist = range(4700,4750)
-zjjblist = range(4500,4558)
-kgqgjlist = range(4800,4858)
-blhxlist = range(6000,6506)
+blhxlist = range(6000,6106)
+blhxlist2 = range(6106,6206)
+blhxlist3 = range(6206,6306)
+blhxlist4 = range(6306,6406)
+blhxlist5 = range(6406,6506)
 yozilist = range(1523,1544)
-mrfzlist = range(5001,5178)
-#genshinlist = range(7001,7018)
+genshinlist = range(7001,7032)
 bangdreamlist = range(1601,1636)
+millist = range(3001,3055)
+collelist = range(4001,4639)
+arklist = range(5001,5180)
+koilist = range(7100,7104)
+sakulist = range(7200,7204)
+cloverlist = range(7300,7307)
+majsoullist = range(7400,7476)
+noranekolist = range(7500,7510)
+vtuberlist = range(7700,7847)
+vtuberlist2 = range(12000,12107)
+fgolist = range(8001,8301)
+umalist = range(11100,11174)
+
 
 
 #这里记录dlc名字和对应列表
 dlcdict = {
-        'blda':bldalist,
-        'zjjb':zjjblist,
         'blhx':blhxlist,
-        'kgqgj':kgqgjlist,
+        'blhx2':blhxlist2,
+        'blhx3':blhxlist3,
+        'blhx4':blhxlist4,
+        'blhx5':blhxlist5,
         'yozi':yozilist,
-        'mrfz':mrfzlist,
-        #'genshin':genshinlist,
-        'bangdream':bangdreamlist
+        'genshin':genshinlist,
+        'bangdream':bangdreamlist,
+        'million':millist,
+        'kancolle':collelist,
+        'koikake':koilist,
+        'sakukoi':sakulist,
+        'cloverdays':cloverlist,
+        'majsoul':majsoullist,
+        'noraneko':noranekolist,
+        'fgo':fgolist,
+        'vtuber':vtuberlist,
+        'vtuber2':vtuberlist2,
+        'arknights':arklist,
+        'umamusume':umalist
         }
 
 
 #这里记录每个dlc的介绍
 dlcintro = {
-        'blda':'碧蓝档案角色包',
-        'zjjb':'机动战姬·聚变角色包',
         'blhx':'碧蓝航线手游角色包。',
-        'kgqgj':'坎特伯雷公主与骑士唤醒冠军之剑的奇幻冒险',
+        'blhx2':'碧蓝航线手游角色包2。',
+        'blhx3':'碧蓝航线手游角色包3。',
+        'blhx4':'碧蓝航线手游角色包4。',
+        'blhx5':'碧蓝航线手游角色包5。',
         'yozi':'柚子社部分角色包。',
-        'mrfz':'明日方舟角色包。',
-        #'genshin':'原神角色包。',
-        'bangdream':'邦邦手游角色包。'
+        'genshin':'原神角色包。',
+        'bangdream':'邦邦手游角色包。',
+        'million':'偶像大师百万剧场角色包',
+        'kancolle':'舰队collection角色包',
+        'koikake':'恋×シンアイ彼女角色包',
+        'sakukoi':'桜ひとひら恋もよう角色包',
+        'cloverdays':'Clover Days角色包',
+        'majsoul':'雀魂角色包',
+        'vtuber':'vtuber角色包',
+        'vtuber2':'vtuber角色包2',
+        'noraneko':'ノラと皇女と野良猫ハート角色包' ,
+        'fgo':'FGO手游角色包',        
+        'arknights':'明日方舟角色包',
+        'umamusume':'赛马娘角色包'
         }
 
 # noinspection SqlResolve
@@ -488,7 +526,9 @@ def get_pcr_id():
 
 # 生成没被约过的角色列表
 def get_newgirl_list(gid):
-    chara_id_list = list(_pcr_data.CHARA_NAME.keys())
+    pcr_id_list = list(_pcr_data.CHARA_NAME.keys())
+    dlc_id_list = list(_dlc_data.DLC_CHARA_NAME.keys())
+    chara_id_list = pcr_id_list + dlc_id_list
     duel = DuelCounter()
     old_list = duel._get_card_list(gid)
     dlc_blacklist = get_dlc_blacklist(gid)
