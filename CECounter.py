@@ -9,7 +9,7 @@ from io import BytesIO
 from PIL import Image
 from hoshino import Service, priv
 from hoshino.modules.priconne import _pcr_data
-from hoshino.modules.priconne import chara
+from hoshino.modules.priconne import duel_chara as chara
 from hoshino.typing import CQEvent
 from hoshino.util import DailyNumberLimiter
 import copy
