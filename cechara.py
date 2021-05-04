@@ -85,4 +85,4 @@ async def my_fashion_info(bot, ev: CQEvent):
                     }
                 }
         tas_list.append(data)
-    await bot.send_group_forward_msg(group_id=ev['group_id'], messages=tas_list)
+        await bot.send_group_forward_msg(group_id=ev['group_id'], messages=tas_list)
