@@ -2139,7 +2139,7 @@ async def get_equipgecha(bot, ev: CQEvent):
             "type": "node",
             "data": {
                 "name": str(NICKNAME[0]),
-                "uin": str(ev.self_id)
+                "uin": str(ev.self_id),
                 "content":meg
                     }
                 }
