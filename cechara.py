@@ -12,6 +12,7 @@ from hoshino.modules.priconne import _pcr_data
 from hoshino.modules.priconne import duel_chara as chara
 from hoshino.typing import CQEvent
 from hoshino.util import DailyNumberLimiter
+from hoshino.config import NICKNAME
 import copy
 import json
 from . import sv
