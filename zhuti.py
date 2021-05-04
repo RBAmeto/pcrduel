@@ -11,7 +11,8 @@ from PIL import Image
 from . import sv
 from hoshino import Service, priv
 from hoshino.modules.priconne import _pcr_data
-from hoshino.modules.priconne import chara
+from hoshino.modules.priconne import duel_chara as chara
+from hoshino.config import NICKNAME
 from hoshino.typing import CQEvent
 from hoshino.util import DailyNumberLimiter
 import copy
@@ -54,7 +55,17 @@ async def duel_help(bot, ev: CQEvent):
   一个女友只属于一位群友
 ╚                                        ╝
 '''  
-    await bot.send(ev, msg)
+    tas_list=[]
+    data = {
+            "type": "node",
+            "data": {
+                "name": str(NICKNAME[0]),
+                "uin": str(ev.self_id),
+                "content":msg
+                    }
+            }
+    tas_list.append(data)
+    await bot.send_group_forward_msg(group_id=ev['group_id'], messages=tas_list)
 
 
 @sv.on_prefix(['加载dlc','加载DLC','开启dlc','开启DLC'])
@@ -114,7 +125,17 @@ async def intro_dlc(bot, ev: CQEvent):
         i+=1
     msg+= '发送 加载\卸载dlc+dlc名\n可加载\卸载dlc\n卸载的dlc不会被抽到，但是角色仍留在玩家仓库，可以被抢走。'    
         
-    await bot.finish(ev, msg)
+    tas_list=[]
+    data = {
+            "type": "node",
+            "data": {
+                "name": str(NICKNAME[0]),
+                "uin": str(ev.self_id),
+                "content":msg
+                    }
+            }
+    tas_list.append(data)
+    await bot.send_group_forward_msg(group_id=ev['group_id'], messages=tas_list)
 
 @sv.on_fullmatch(['dlc帮助','DLC帮助','dlc指令','DLC指令'])
 async def help_dlc(bot, ev: CQEvent):
@@ -149,7 +170,17 @@ async def duel_biao(bot, ev: CQEvent):
 "10": "皇帝"升级需要2500声望和20000金币，最多可持有15名女友，每日签到额外获得1000金币，不再会掉级，可拥有一名妻子。
 "11": "神"升级需要4000声望和30000金币，最多可持有99名女友，每日签到额外获得2000金币，当输光女友时贬为平民，可拥有一名妻子。
 '''  
-    await bot.send(ev, msg)
+    tas_list=[]
+    data = {
+            "type": "node",
+            "data": {
+                "name": str(NICKNAME[0]),
+                "uin": str(ev.self_id),
+                "content":msg
+                    }
+            }
+    tas_list.append(data)
+    await bot.send_group_forward_msg(group_id=ev['group_id'], messages=tas_list)
 
 
 
@@ -753,7 +784,17 @@ async def group_noble_status(bot, ev: CQEvent):
   还有{newgirlnum}名单身女友 
 ╚                          ╝
 '''
-    await bot.send(ev, msg)
+    tas_list=[]
+    data = {
+            "type": "node",
+            "data": {
+                "name": str(NICKNAME[0]),
+                "uin": str(ev.self_id),
+                "content":msg
+                    }
+            }
+    tas_list.append(data)
+    await bot.send_group_forward_msg(group_id=ev['group_id'], messages=tas_list)
     
 @sv.on_fullmatch('创建贵族')
 async def add_noble(bot, ev: CQEvent):
@@ -944,7 +985,17 @@ async def inquire_noble(bot, ev: CQEvent):
 '''
 
 
-        await bot.send(ev, msg, at_sender=True)
+        tas_list=[]
+        data = {
+                "type": "node",
+                "data": {
+                    "name": str(NICKNAME[0]),
+                    "uin": str(ev.self_id),
+                    "content":msg
+                        }
+                }
+        tas_list.append(data)
+        await bot.send_group_forward_msg(group_id=ev['group_id'], messages=tas_list)
 
 
 @sv.on_fullmatch(['招募女友', '贵族舞会'])
@@ -1972,8 +2023,8 @@ async def breakup_yj(bot, ev: CQEvent):
             data = {
                 "type": "node",
                 "data": {
-                    "name": "ご主人様",
-                    "uin": "1587640710",
+                    "name": str(NICKNAME[0]),
+                    "uin": str(ev.self_id),
                     "content":msg
                         }
                     }
@@ -2015,7 +2066,17 @@ async def prestige_help(bot, ev: CQEvent):
 妻子不会因决斗被抢走
 
  '''  
-    await bot.send(ev, msg)
+    tas_list=[]
+    data = {
+            "type": "node",
+            "data": {
+                "name": str(NICKNAME[0]),
+                "uin": str(ev.self_id),
+                "content":msg
+                    }
+            }
+    tas_list.append(data)
+    await bot.send_group_forward_msg(group_id=ev['group_id'], messages=tas_list)
 
 @sv.on_fullmatch('查询声望')
 async def inquire_prestige(bot, ev: CQEvent):
@@ -2463,7 +2524,17 @@ async def gift_help(bot, ev: CQEvent):
 女友喜好与原角色无关，只是随机生成，仅供娱乐
 ╚                                        ╝
  '''  
-    await bot.send(ev, msg)
+    tas_list=[]
+    data = {
+            "type": "node",
+            "data": {
+                "name": str(NICKNAME[0]),
+                "uin": str(ev.self_id),
+                "content":msg
+                    }
+            }
+    tas_list.append(data)
+    await bot.send_group_forward_msg(group_id=ev['group_id'], messages=tas_list)
 
 
 @sv.on_fullmatch(['好感列表','女友好感列表'])
@@ -2591,7 +2662,17 @@ async def Race_ranking(bot, ev: CQEvent):
         for i in range(min(len(group_ranking), 10)):
             if group_ranking[i][1] != 0:
                 msg += f'第{i+1}名: {group_ranking[i][0]}, 金币: {group_ranking[i][1]}\n'
-        await bot.send(ev, msg.strip())
+        tas_list=[]
+        data = {
+                "type": "node",
+                "data": {
+                        "name": str(NICKNAME[0]),
+                        "uin": str(ev.self_id),
+                        "content":msg.strip()
+                        }
+                }
+        tas_list.append(data)
+        await bot.send_group_forward_msg(group_id=ev['group_id'], messages=tas_list)
     except Exception as e:
         await bot.send(ev, '错误:\n' + str(e))        
         
@@ -2612,7 +2693,17 @@ async def SW_ranking(bot, ev: CQEvent):
         for i in range(min(len(group_ranking), 10)):
             if group_ranking[i][1] != 0:
                 msg += f'第{i+1}名: {group_ranking[i][0]}, 声望: {group_ranking[i][1]}\n'
-        await bot.send(ev, msg.strip())
+        tas_list=[]
+        data = {
+                "type": "node",
+                "data": {
+                        "name": str(NICKNAME[0]),
+                        "uin": str(ev.self_id),
+                        "content":msg.strip()
+                        }
+                }
+        tas_list.append(data)
+        await bot.send_group_forward_msg(group_id=ev['group_id'], messages=tas_list)
     except Exception as e:
         await bot.send(ev, '错误:\n' + str(e))      
 
@@ -2633,7 +2724,17 @@ async def SW_ranking(bot, ev: CQEvent):
         for i in range(min(len(group_ranking), 10)):
             if group_ranking[i][1] != 0:
                 msg += f'第{i+1}名: {group_ranking[i][0]}, 女友数: {group_ranking[i][1]}\n'
-        await bot.send(ev, msg.strip())
+        tas_list=[]
+        data = {
+                "type": "node",
+                "data": {
+                        "name": str(NICKNAME[0]),
+                        "uin": str(ev.self_id),
+                        "content":msg.strip()
+                        }
+                }
+        tas_list.append(data)
+        await bot.send_group_forward_msg(group_id=ev['group_id'], messages=tas_list)
     except Exception as e:
         await bot.send(ev, '错误:\n' + str(e))     
 
@@ -2692,7 +2793,17 @@ async def GET_Cele(bot, ev: CQEvent):
        msg += f'当前正举办限时开启声望招募庆典'
     else:
        msg += f'当前未举办限时开启声望招募庆典'
-    await bot.send(ev, msg, at_sender=True)
+    tas_list=[]
+    data = {
+            "type": "node",
+            "data": {
+                    "name": str(NICKNAME[0]),
+                    "uin": str(ev.self_id),
+                    "content":msg
+                    }
+            }
+    tas_list.append(data)
+    await bot.send_group_forward_msg(group_id=ev['group_id'], messages=tas_list)
    else:   
     if duel._get_GOLD_CELE(gid) == 1:
        msg = f'\n当前正举办押注金币庆典，当支持成功时，获得的金币将变为原来的{Gold_Cele_Num}倍\n'
@@ -2706,7 +2817,17 @@ async def GET_Cele(bot, ev: CQEvent):
        msg += f'当前正举办免费招募庆典，每日可免费招募{FREE_DAILY_LIMIT}次\n'
     if duel._get_SW_CELE(gid) == 1:
        msg += f'当前正举办限时开启声望招募庆典'
-    await bot.send(ev, msg, at_sender=True)
+    tas_list=[]
+    data = {
+            "type": "node",
+            "data": {
+                    "name": str(NICKNAME[0]),
+                    "uin": str(ev.self_id),
+                    "content":msg
+                    }
+            }
+    tas_list.append(data)
+    await bot.send_group_forward_msg(group_id=ev['group_id'], messages=tas_list)
     
 @sv.on_rex(r'^开启本群(金币|签到|梭哈倍率|免费招募|声望招募)庆典$')
 async def ON_Cele_SWITCH(bot, ev: CQEvent):
@@ -2837,14 +2958,6 @@ async def initialization(bot, ev: CQEvent):
     duel._initialization_CELE(gid,Gold_Cele,QD_Cele,Suo_Cele,SW_add,FREE_DAILY)
     msg = f'已成功初始化本群庆典！\n您可发送查询庆典来查看本群庆典情况！\n'
     await bot.send(ev, msg, at_sender=True)
-
-@sv.on_fullmatch('重置礼物交换')
-async def init_change(bot, ev: CQEvent):
-    if not priv.check_priv(ev, priv.ADMIN):
-        await bot.finish(ev, '只有群管理才能使用重置礼物交换哦。', at_sender=True)
-    gift_change.turn_off_giftchange(ev.group_id)
-    msg = '已重置本群礼物交换状态！'
-    await bot.send(ev, msg, at_sender=True)
     
 @sv.on_rex(f'^兑换(\d+)声望$')
 async def cheat_score(bot, ev: CQEvent):
@@ -2888,7 +3001,17 @@ async def fashion_help(bot, ev: CQEvent):
 通过购买时装可以提升好感
 ╚                                        ╝
  '''  
-    await bot.send(ev, msg)
+    tas_list=[]
+    data = {
+            "type": "node",
+            "data": {
+                    "name": str(NICKNAME[0]),
+                    "uin": str(ev.self_id),
+                    "content":msg
+                    }
+            }
+    tas_list.append(data)
+    await bot.send_group_forward_msg(group_id=ev['group_id'], messages=tas_list)
 
 @sv.on_fullmatch('时装商城')
 async def fashion_list(bot, ev: CQEvent):
@@ -2916,8 +3039,8 @@ async def fashion_list(bot, ev: CQEvent):
             data = {
                 "type": "node",
                 "data": {
-                    "name": "ご主人様",
-                    "uin": "1587640710",
+                    "name": str(NICKNAME[0]),
+                    "uin": str(ev.self_id),
                     "content":tat
                         }
                     }
@@ -2939,8 +3062,8 @@ async def fashion_list(bot, ev: CQEvent):
                         data = {
                             "type": "node",
                             "data": {
-                                "name": "ご主人様",
-                                "uin": "1587640710",
+                                "name": str(NICKNAME[0]),
+                                "uin": str(ev.self_id),
                                 "content":lh_msg
                                     }
                                 }
