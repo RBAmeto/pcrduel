@@ -13,9 +13,10 @@ from . import sv
 from decimal import Decimal
 from hoshino import Service, priv
 from hoshino.modules.priconne import _pcr_data
-from hoshino.modules.priconne import chara
+from hoshino.modules.priconne import duel_chara as chara
 from hoshino.typing import CQEvent
 from hoshino.util import DailyNumberLimiter
+from hoshino.config import NICKNAME
 import copy
 import json
 import nonebot
@@ -47,6 +48,8 @@ async def gift_help(bot, ev: CQEvent):
 11. 结束修炼
 12. 我的经验池
 13. 分配经验+女友名+经验值
+14. 副本商城 兑换装备
+15. 角色转生
 注:
 战力计算器：
     基础战力 = 100 + 等级*(50+转生等级*50)*(1+星级!/10) + 好感度*0.4 + 时装加成战力
@@ -54,7 +57,17 @@ async def gift_help(bot, ev: CQEvent):
     最大rank等级为12级，达到r12可以增幅2.5倍战力
 ╚                                        ╝
  '''
-    await bot.send(ev, msg)
+    tas_list=[]
+    data = {
+            "type": "node",
+            "data": {
+                "name": str(NICKNAME[0]),
+                "uin": str(ev.self_id),
+                "content":msg
+                    }
+            }
+    tas_list.append(data)
+await bot.send_group_forward_msg(group_id=ev['group_id'], messages=tas_list)
 
 @sv.on_prefix(['绑定女友'])
 async def card_bangdin(bot, ev: CQEvent):
@@ -139,7 +152,18 @@ async def rank_list(bot, ev: CQEvent):
             needlevel = 4
         msg += f'"R{rank}": 需求贵族等级≥{noblename}，消耗{rankInfo}金币，身上穿戴的4件{needmodel}品质及以上装备，女友战力提升为{ce_up}倍\n'
         rank = rank + 1
-    await bot.send(ev, msg)
+    tas_list=[]
+    data = {
+        "type": "node",
+        "data": {
+            "name": str(NICKNAME[0]),
+            "uin": str(ev.self_id),
+            "content":msg
+            }
+    }
+    tas_list.append(data)
+await bot.send_group_forward_msg(group_id=ev['group_id'], messages=tas_list)
+
 
 @sv.on_prefix(['升级rank','rank升级','提升rank'])
 async def up_rank(bot, ev: CQEvent):
@@ -283,7 +307,17 @@ async def girl_power_rank(bot, ev: CQEvent):
             rank = rank+1
     else:
         msg += '暂无女友上榜'
-    await bot.send(ev, msg)
+    tas_list=[]
+    data = {
+        "type": "node",
+        "data": {
+            "name": str(NICKNAME[0]),
+            "uin": str(ev.self_id),
+            "content":msg
+            }
+    }
+    tas_list.append(data)
+await bot.send_group_forward_msg(group_id=ev['group_id'], messages=tas_list)
     
 @sv.on_fullmatch(['副本系统帮助','副本帮助','装备帮助'])
 async def dun_help(bot, ev: CQEvent):
@@ -300,7 +334,17 @@ async def dun_help(bot, ev: CQEvent):
 升级角色等级，装备装备可以提升角色战力
 ╚                                        ╝
  '''  
-    await bot.send(ev, msg)  
+    tas_list=[]
+    data = {
+        "type": "node",
+        "data": {
+            "name": str(NICKNAME[0]),
+            "uin": str(ev.self_id),
+            "content":msg
+            }
+    }
+    tas_list.append(data)
+await bot.send_group_forward_msg(group_id=ev['group_id'], messages=tas_list)
 
 @sv.on_fullmatch(['副本列表','查看副本'])
 async def dungeon_list(bot, ev: CQEvent):
@@ -319,8 +363,8 @@ async def dungeon_list(bot, ev: CQEvent):
         data = {
             "type": "node",
             "data": {
-                "name": "ご主人様",
-                "uin": "1587640710",
+                "name": str(NICKNAME[0]),
+                "uin": str(ev.self_id),
                 "content": msg
                     }
                 }
@@ -431,8 +475,8 @@ async def add_duiwu_t(bot, ev: CQEvent):
         data = {
             "type": "node",
             "data": {
-                "name": "ご主人様",
-                "uin": "1587640710",
+                "name": str(NICKNAME[0]),
+                "uin": str(ev.self_id),
                 "content":msg1
                     }
                 }
@@ -544,8 +588,8 @@ async def add_duiwu_t(bot, ev: CQEvent):
             data = {
                 "type": "node",
                 "data": {
-                    "name": "ご主人様",
-                    "uin": "1587640710",
+                    "name": str(NICKNAME[0]),
+                    "uin": str(ev.self_id),
                     "content":msg
                         }
                     }
@@ -562,8 +606,8 @@ async def add_duiwu_t(bot, ev: CQEvent):
             data = {
                 "type": "node",
                 "data": {
-                    "name": "ご主人様",
-                    "uin": "1587640710",
+                    "name": str(NICKNAME[0]),
+                    "uin": str(ev.self_id),
                     "content":msg
                         }
                     }
@@ -673,7 +717,17 @@ async def my_equip_list(bot, ev: CQEvent):
         for i in equip_list:
             equipinfo=get_equip_info_id(i[0])
             msg_list = msg_list + f"\n{equipinfo['type']}:({equipinfo['model']}){equipinfo['name']}:{i[1]}件"
-        await bot.send(ev, msg_list, at_sender=True)
+        tas_list=[]
+        data = {
+            "type": "node",
+            "data": {
+                "name": str(NICKNAME[0]),
+                "uin": str(ev.self_id),
+                "content":msg_list
+                    }
+                }
+        tas_list.append(data)
+        await bot.send_group_forward_msg(group_id=ev['group_id'], messages=tas_list)
     else:
         await bot.finish(ev, '您还没有获得装备哦。', at_sender=True)
 
@@ -871,8 +925,8 @@ async def equip_shop(bot, ev: CQEvent):
     data = {
         "type": "node",
         "data": {
-            "name": "ご主人様",
-            "uin": "1587640710",
+            "name": str(NICKNAME[0]),
+            "uin": str(ev.self_id),
             "content": msg_t
                 }
             }
@@ -890,8 +944,8 @@ async def equip_shop(bot, ev: CQEvent):
             data = {
                 "type": "node",
                 "data": {
-                    "name": "ご主人様",
-                    "uin": "1587640710",
+                    "name": str(NICKNAME[0]),
+                    "uin": str(ev.self_id),
                     "content":msg
                         }
                     }
@@ -1037,8 +1091,8 @@ async def moni_huizhan(bot, ev: CQEvent):
         data = {
             "type": "node",
             "data": {
-                "name": "ご主人様",
-                "uin": "1587640710",
+                "name": str(NICKNAME[0]),
+                "uin": str(ev.self_id),
                 "content":msg1
                     }
                 }
@@ -1096,8 +1150,8 @@ async def moni_huizhan(bot, ev: CQEvent):
         data = {
             "type": "node",
             "data": {
-                "name": "ご主人様",
-                "uin": "1587640710",
+                "name": str(NICKNAME[0]),
+                "uin": str(ev.self_id),
                 "content":msg
                     }
                 }
@@ -1170,8 +1224,8 @@ async def bushi_moni(bot, ev: CQEvent):
         data = {
             "type": "node",
             "data": {
-                "name": "ご主人様",
-                "uin": "1587640710",
+                "name": str(NICKNAME[0]),
+                "uin": str(ev.self_id),
                 "content":msg1
                     }
                 }
@@ -1230,8 +1284,8 @@ async def bushi_moni(bot, ev: CQEvent):
         data = {
             "type": "node",
             "data": {
-                "name": "ご主人様",
-                "uin": "1587640710",
+                "name": str(NICKNAME[0]),
+                "uin": str(ev.self_id),
                 "content":msg
                     }
                 }
@@ -1310,8 +1364,8 @@ async def start_bushi(bot, ev: CQEvent):
         data = {
             "type": "node",
             "data": {
-                "name": "ご主人様",
-                "uin": "1587640710",
+                "name": str(NICKNAME[0]),
+                "uin": str(ev.self_id),
                 "content":msg1
                     }
                 }
@@ -1387,8 +1441,8 @@ async def start_bushi(bot, ev: CQEvent):
         data = {
             "type": "node",
             "data": {
-                "name": "ご主人様",
-                "uin": "1587640710",
+                "name": str(NICKNAME[0]),
+                "uin": str(ev.self_id),
                 "content":msg
                     }
                 }
@@ -1414,8 +1468,8 @@ async def start_bushi(bot, ev: CQEvent):
                 data = {
                     "type": "node",
                     "data": {
-                        "name": "ご主人様",
-                        "uin": "1587640710",
+                        "name": str(NICKNAME[0]),
+                        "uin": str(ev.self_id),
                         "content":f"{gotype}战况：\n第{bossinfo['zhoumu']}周目{bossinfo['bossid']}号boss({bossinfo['name']})\n已被打死，开始分配boss掉落"
                             }
                         }
@@ -1433,8 +1487,8 @@ async def start_bushi(bot, ev: CQEvent):
                         data = {
                             "type": "node",
                             "data": {
-                                "name": "ご主人様",
-                                "uin": "1587640710",
+                                "name": str(NICKNAME[0]),
+                                "uin": str(ev.self_id),
                                 "content":f"[CQ:at,qq={shuchu[1]}]您对boss造成了{shuchu[2]}点伤害，获得了装备\n{get_equip}{get_awardequip}"
                                     }
                                 }
@@ -1551,8 +1605,8 @@ async def start_huizhan(bot, ev: CQEvent):
         data = {
             "type": "node",
             "data": {
-                "name": "ご主人様",
-                "uin": "1587640710",
+                "name": str(NICKNAME[0]),
+                "uin": str(ev.self_id),
                 "content":msg1
                     }
                 }
@@ -1624,8 +1678,8 @@ async def start_huizhan(bot, ev: CQEvent):
         data = {
             "type": "node",
             "data": {
-                "name": "ご主人様",
-                "uin": "1587640710",
+                "name": str(NICKNAME[0]),
+                "uin": str(ev.self_id),
                 "content":msg
                     }
                 }
@@ -1651,8 +1705,8 @@ async def start_huizhan(bot, ev: CQEvent):
                 data = {
                     "type": "node",
                     "data": {
-                        "name": "ご主人様",
-                        "uin": "1587640710",
+                        "name": str(NICKNAME[0]),
+                        "uin": str(ev.self_id),
                         "content":f"{gotype}战况：\n第{bossinfo['zhoumu']}周目{bossinfo['bossid']}号boss({bossinfo['name']})\n已被打死，开始分配boss掉落"
                             }
                         }
@@ -1670,8 +1724,8 @@ async def start_huizhan(bot, ev: CQEvent):
                         data = {
                             "type": "node",
                             "data": {
-                                "name": "ご主人様",
-                                "uin": "1587640710",
+                                "name": str(NICKNAME[0]),
+                                "uin": str(ev.self_id),
                                 "content":f"[CQ:at,qq={shuchu[1]}]您对boss造成了{shuchu[2]}点伤害，获得了装备\n{get_equip}{get_awardequip}"
                                     }
                                 }
@@ -1697,7 +1751,17 @@ async def boss_help(bot, ev: CQEvent):
 世界boss为所有加的群一起打，打死一个boss有装备掉落，不同类型的boss每日各有3次次数
 ╚                                        ╝
  '''  
-    await bot.send(ev, msg)
+    tas_list=[]
+    data = {
+            "type": "node",
+            "data": {
+                "name": str(NICKNAME[0]),
+                "uin": str(ev.self_id),
+                "content":msg
+                    }
+           }
+    tas_list.append(data)
+await bot.send_group_forward_msg(group_id=ev['group_id'], messages=tas_list)
 
 @sv.on_rex(f'^(.*)伤害排行$')
 async def shuchu_list(bot, ev: CQEvent):
@@ -1723,8 +1787,8 @@ async def shuchu_list(bot, ev: CQEvent):
         data = {
             "type": "node",
             "data": {
-                "name": "ご主人様",
-                "uin": "1587640710",
+                "name": str(NICKNAME[0]),
+                "uin": str(ev.self_id),
                 "content":f"为保护个人隐私，世界boss只显示本群数据"
                     }
                 }
@@ -1734,8 +1798,8 @@ async def shuchu_list(bot, ev: CQEvent):
         data = {
             "type": "node",
             "data": {
-                "name": "ご主人様",
-                "uin": "1587640710",
+                "name": str(NICKNAME[0]),
+                "uin": str(ev.self_id),
                 "content":f"[CQ:at,qq={shuchu[0]}]总共造成了{shuchu[1]}点伤害"
                     }
                 }
@@ -2032,7 +2096,17 @@ async def gecha_help(bot, ev: CQEvent):
 副本币获取其他路径：通关每日副本
 ╚                                        ╝
  '''
-    await bot.send(ev, msg)
+    tas_list=[]
+    data = {
+            "type": "node",
+            "data": {
+                "name": str(NICKNAME[0]),
+                "uin": str(ev.self_id),
+                "content":msg
+                    }
+           }
+    tas_list.append(data)
+await bot.send_group_forward_msg(group_id=ev['group_id'], messages=tas_list)
 
 @sv.on_fullmatch(['查看武器池','武器池'])
 async def get_equipgecha(bot, ev: CQEvent):
@@ -2064,8 +2138,8 @@ async def get_equipgecha(bot, ev: CQEvent):
         data = {
             "type": "node",
             "data": {
-                "name": "ご主人様",
-                "uin": "1587640710",
+                "name": str(NICKNAME[0]),
+                "uin": str(ev.self_id)
                 "content":meg
                     }
                 }
@@ -2200,7 +2274,17 @@ async def equip_fenjie_n(bot, ev: CQEvent):
         if dunscore>0:
             CE._add_dunscore(gid, uid, dunscore)
             msg = f"分解成功，您分解了{msg_list}\n一共获得了{dunscore}副本币"
-            await bot.send(ev, msg, at_sender=True)
+            tas_list=[]
+            data = {
+                "type": "node",
+                "data": {
+                         "name": str(NICKNAME[0]),
+                         "uin": str(ev.self_id),
+                         "content":msg
+                        }
+                }
+            tas_list.append(data)
+            await bot.send_group_forward_msg(group_id=ev['group_id'], messages=tas_list)
         else:
             await bot.finish(ev, f'您没有{modelname}级及以下的装备哦。', at_sender=True)
     else:
@@ -2339,8 +2423,8 @@ async def paiming_list(bot, ev: CQEvent):
     data = {
         "type": "node",
         "data": {
-            "name": "ご主人様",
-            "uin": "1587640710",
+            "name": str(NICKNAME[0]),
+            "uin": str(ev.self_id),
             "content":f"{msg_s_b}{leibie}boss战群排行榜\n{msg_b}"
                 }
             }
@@ -2349,8 +2433,8 @@ async def paiming_list(bot, ev: CQEvent):
     data = {
         "type": "node",
         "data": {
-            "name": "ご主人様",
-            "uin": "1587640710",
+            "name": str(NICKNAME[0]),
+            "uin": str(ev.self_id),
             "content":f"{msg_s_q}{leibie}世界boss群排行榜\n{msg_s}"
                 }
             }
@@ -2492,8 +2576,8 @@ async def clock():
         data = {
             "type": "node",
             "data": {
-                "name": "ご主人様",
-                "uin": "1587640710",
+                "name": str(NICKNAME[0]),
+                "uin": str(ev.self_id),
                 "content":f"本群boss战群排名第{gidmc_b}名，获得奖励"
                     }
                 }
@@ -2502,8 +2586,8 @@ async def clock():
         data = {
             "type": "node",
             "data": {
-                "name": "ご主人様",
-                "uin": "1587640710",
+                "name": str(NICKNAME[0]),
+                "uin": str(ev.self_id),
                 "content":msg_b
                     }
                 }
@@ -2512,8 +2596,8 @@ async def clock():
         data = {
             "type": "node",
             "data": {
-                "name": "ご主人様",
-                "uin": "1587640710",
+                "name": str(NICKNAME[0]),
+                "uin": str(ev.self_id),
                 "content":f"本群世界boss群排名第{gidmc_s}名，获得奖励"
                     }
                 }
@@ -2522,8 +2606,8 @@ async def clock():
         data = {
             "type": "node",
             "data": {
-                "name": "ご主人様",
-                "uin": "1587640710",
+                "name": str(NICKNAME[0]),
+                "uin": str(ev.self_id),
                 "content":msg_s
                     }
                 }
@@ -2538,8 +2622,8 @@ async def clock():
                         data = {
                             "type": "node",
                             "data": {
-                                "name": "ご主人様",
-                                "uin": "1587640710",
+                                "name": str(NICKNAME[0]),
+                                "uin": str(ev.self_id),
                                 "content":f"[CQ:at,qq={shuchuinfo[1]}]您获得了{gidjl_s}副本币"
                                     }
                                 }
@@ -2551,8 +2635,8 @@ async def clock():
                         data = {
                             "type": "node",
                             "data": {
-                                "name": "ご主人様",
-                                "uin": "1587640710",
+                                "name": str(NICKNAME[0]),
+                                "uin": str(ev.self_id),
                                 "content":f"[CQ:at,qq={shuchuinfo[1]}]您获得了{gidjl_b}副本币"
                                     }
                                 }
@@ -2694,7 +2778,17 @@ async def star_help(bot, ev: CQEvent):
     5星增加战力的2.5倍
 ╚                                        ╝
  '''
-    await bot.send(ev, msg)
+    tas_list=[]
+    data = {
+            "type": "node",
+            "data": {
+                "name": str(NICKNAME[0]),
+                "uin": str(ev.self_id),
+                "content":msg
+                    }
+            }
+    tas_list.append(data)
+await bot.send_group_forward_msg(group_id=ev['group_id'], messages=tas_list)
     
     
 @sv.on_prefix(['角色转生'])
