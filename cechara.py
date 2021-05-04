@@ -74,4 +74,14 @@ async def my_fashion_info(bot, ev: CQEvent):
         if lh_msg:
             lh_msg = f"\n您为{c.name}购买的时装有(只显示未穿的2件)："+lh_msg
         msg = f'\n{c.name}{queen_msg}对你的好感是{favor}\n你们的关系是{relationship}\n“{text}”{up_msg}{nvmes}{lh_msg}'
-    await bot.send(ev, msg, at_sender=True)  
+        tas_list=[]
+        data = {
+            "type": "node",
+            "data": {
+                "name": str(NICKNAME[0]),
+                "uin": str(ev.self_id),
+                "content":msg
+                    }
+                }
+        tas_list.append(data)
+    await bot.send_group_forward_msg(group_id=ev['group_id'], messages=tas_list)
