@@ -951,7 +951,7 @@ async def equip_shop(bot, ev: CQEvent):
                     }
             tas_list.append(data)
             #await bot.send(ev, msg)
-            await bot.send_group_forward_msg(group_id=ev['group_id'], messages=tas_list)
+    await bot.send_group_forward_msg(group_id=ev['group_id'], messages=tas_list)
 
 @sv.on_prefix(['兑换装备'])
 async def buy_equip(bot, ev: CQEvent):
