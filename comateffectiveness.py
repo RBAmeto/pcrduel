@@ -1741,7 +1741,7 @@ async def boss_help(bot, ev: CQEvent):
     msg='''
 ╔                                        ╗  
              会战系统帮助
-1. (boss/世界boss)状态
+1. (boss/世界boss)战状态
 2. 编队+女友名(最多5名，用空格隔开)开始(boss战/世界boss)
 3. 编队+女友名(最多5名，用空格隔开)模拟(boss战/世界boss)
 4. (boss战/世界boss)补时刀模拟
@@ -1806,7 +1806,7 @@ async def shuchu_list(bot, ev: CQEvent):
         tas_list.append(data)
     await bot.send_group_forward_msg(group_id=gid, messages=tas_list)
 
-@sv.on_rex(f'^(.*)状态$')
+@sv.on_rex(f'^(.*)战状态$')
 async def boss_info(bot, ev: CQEvent):
     gid = ev.group_id
     match = ev['match']
@@ -1815,11 +1815,11 @@ async def boss_info(bot, ev: CQEvent):
     if gotype == "世界boss":
         sendgid = 999
         shijieflag = 1
-    elif gotype == "boss战":
+    elif gotype == "boss":
         sendgid = gid
         shijieflag = 0
     else:
-        await bot.finish(ev, '请选择正确的boss战类型（世界boss/boss战）', at_sender=True)
+        await bot.finish(ev, '请选择正确的boss战类型（世界boss战/boss战）', at_sender=True)
     bossinfo = get_boss_info(sendgid)
     msg = f"当前boss状态为：\n第{bossinfo['zhoumu']}周目{bossinfo['bossid']}号boss({bossinfo['name']})\nboss战力为{bossinfo['ce']}，当前血量为{bossinfo['hp']}\n{bossinfo['icon']}"
     await bot.send(ev, msg)
