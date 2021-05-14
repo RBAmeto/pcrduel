@@ -120,7 +120,7 @@ async def intro_dlc(bot, ev: CQEvent):
         msg+=f'{i}.{dlc}:\n'
         intro = dlcintro[dlc]
         msg+=f'介绍:{intro}\n'
-        num = len(dlcdict[dlc])
+        num = len(dlcdict[dlc]) + 1
         msg+=f'共有{num}名角色\n\n'
         i+=1
     msg+= '发送 加载\卸载dlc+dlc名\n可加载\卸载dlc\n卸载的dlc不会被抽到，但是角色仍留在玩家仓库，可以被抢走。'    
