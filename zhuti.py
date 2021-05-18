@@ -25,7 +25,6 @@ from .duelconfig import *
 @sv.on_fullmatch(['贵族决斗帮助','贵族帮助','贵族指令'])
 async def duel_help(bot, ev: CQEvent):
     msg='''
-╔                                       ╗    
         贵族决斗相关指令
 
    1.贵族签到(每日一次)
@@ -37,8 +36,7 @@ async def duel_help(bot, ev: CQEvent):
    7.升级贵族
    8.重置金币+qq (限群主)
    9.重置角色+qq (限群主) 
-   10.重置决斗(限管理，决
-   斗卡住时用)
+   10.重置决斗(限管理，决斗卡住时用)
    11.分手+角色名(需分手费) 一键分手+角色名
    12.贵族等级表
    13.兑换xx声望 (兑换比例1：10000)
@@ -53,7 +51,6 @@ async def duel_help(bot, ev: CQEvent):
    
    
   一个女友只属于一位群友
-╚                                        ╝
 '''  
     tas_list=[]
     data = {
