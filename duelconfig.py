@@ -988,19 +988,15 @@ def get_nv_icon(cid):
     mes = c.icon.cqcode
     PIC_PATH = os.path.join(FILE_PATH,'fullcard')
     path = os.path.join(PIC_PATH,f'{cid}31.png')
+    path = os.path.join(PIC_PATH,f'{cid}31.png')
     if  not os.path.exists(path):
         path = os.path.join(PIC_PATH,f'{cid}31.jpg')
+    if  os.path.exists(path):
         img = Image.open(path)
         bio = BytesIO()
         img.save(bio, format='PNG')
         base64_str = 'base64://' + base64.b64encode(bio.getvalue()).decode()
         mes = f"[CQ:image,file={base64_str}]"
-    else:
-        img = Image.open(path)
-        bio = BytesIO()
-        img.save(bio, format='PNG')
-        base64_str = 'base64://' + base64.b64encode(bio.getvalue()).decode()
-        mes = f"[CQ:image,file={base64_str}]"   
     return mes
     
 #根据角色id和礼物id，返回增加的好感和文本
