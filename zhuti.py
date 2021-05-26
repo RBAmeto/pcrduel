@@ -25,6 +25,7 @@ from .duelconfig import *
 @sv.on_fullmatch(['贵族决斗帮助','贵族帮助','贵族指令'])
 async def duel_help(bot, ev: CQEvent):
     msg='''
+╔                                       ╗    
         贵族决斗相关指令
 
    1.贵族签到(每日一次)
@@ -36,10 +37,11 @@ async def duel_help(bot, ev: CQEvent):
    7.升级贵族
    8.重置金币+qq (限群主)
    9.重置角色+qq (限群主) 
-   10.重置决斗(限管理，决斗卡住时用)
-   11.分手+角色名(需分手费) 一键分手+角色名
+   10.重置决斗(限管理，决
+   斗卡住时用)
+   11.分手+角色名(需分手费)
    12.贵族等级表
-   13.兑换xx声望 (兑换比例1：10000)
+   13.兑换声望+数量(兑换比例1：10000)
    14.转账(为@qq转账xxx金币)
    15.女友交易(用xxx金币与@qq交易女友+角色名)，需要收10%交易手续费
    16.dlc帮助(增加dlc角色)
@@ -51,6 +53,7 @@ async def duel_help(bot, ev: CQEvent):
    
    
   一个女友只属于一位群友
+╚                                        ╝
 '''  
     tas_list=[]
     data = {
@@ -673,6 +676,9 @@ async def noblelogin(bot, ev: CQEvent):
     #随机获得一件礼物
     select_gift = random.choice(list(GIFT_DICT.keys()))
     gfid = GIFT_DICT[select_gift]
+    while(gfid == 15):
+            select_gift = random.choice(list(GIFT_DICT.keys()))
+            gfid = GIFT_DICT[select_gift]
     duel._add_gift(gid,uid,gfid)
     msg +=f'\n随机获得了礼物[{select_gift}]'
     await bot.send(ev, msg, at_sender=True)
@@ -1255,6 +1261,16 @@ async def nobleduel(bot, ev: CQEvent):
         duel_judger.turn_off(ev.group_id)
         return
     daily_duel_limiter.increase(guid)
+    if not args:
+        force = 0
+    else:
+        if args[0] == '强制':
+            gfid = 11
+            if duel._get_gift_num(gid,id1,gfid)==0:
+                duel_judger.turn_off(ev.group_id)
+                await bot.finish(ev, '您并未持有强制决斗卡！')
+            duel._reduce_gift(gid,id1,gfid)
+            force = 1
 
 
 
@@ -2299,6 +2315,8 @@ async def give_gift_all(bot, ev: CQEvent):
     if gift not in GIFT_DICT.keys():
         await bot.finish(ev, '请输入正确的礼物名。', at_sender=True)
     gfid = GIFT_DICT[gift]
+    if gfid > 10:
+        await bot.finish(ev, '这个物品不能作为礼物哦。', at_sender=True)
     gift_num = duel._get_gift_num(gid,uid,gfid)
     if gift_num==0:
         await bot.finish(ev, '你的这件礼物的库存不足哦。', at_sender=True)
@@ -2330,6 +2348,9 @@ async def buy_gift(bot, ev: CQEvent):
         await bot.finish(ev, f'今天购买礼物已经超过{GIFT_DAILY_LIMIT}次了哦，明天再来吧。', at_sender=True)     
     select_gift = random.choice(list(GIFT_DICT.keys()))
     gfid = GIFT_DICT[select_gift]
+    while(gfid >= 10):
+            select_gift = random.choice(list(GIFT_DICT.keys()))
+            gfid = GIFT_DICT[select_gift]
     duel._add_gift(gid,uid,gfid)
     msg = f'\n您花费了300金币，\n买到了[{select_gift}]哦，\n欢迎下次惠顾。'
     score_counter._reduce_score(gid,uid,300)
@@ -2476,7 +2497,8 @@ async def buy_information(bot, ev: CQEvent):
         num1 = last_num%3
         num2 = GIFT_DICT[gift]%3
         choicelist = GIFTCHOICE_DICT[num1]
-
+        if GIFT_DICT[gift] >= 10:
+            continue
         if num2 == choicelist[0]:
             like+=f'{gift}\n'
             continue
@@ -3369,3 +3391,77 @@ async def get_random_gold(bot, ev:CQEvent):
         if newnum == 0:
             await bot.send(ev, f'红包已全部领取完毕')
             r_gold.turn_off_random_gold(gid)
+
+
+
+@sv.on_fullmatch('删bug')
+async def shanbug(bot, ev:CQEvent):
+    duel = DuelCounter()
+    duel._delete_card(285991381, 375744371, 7801)
+    await bot.send(ev, f'删掉了md')
+    
+@sv.on_prefix(['使用道具'])
+async def use(bot, ev: CQEvent):
+    args = ev.message.extract_plain_text().split()
+    gid = ev.group_id
+    uid = ev.user_id
+    duel = DuelCounter()
+    CTUSE = [11,12,13]
+    if not args:
+        await bot.finish(ev, '请输入 使用道具+道具名+目标名 中间用空格隔开。', at_sender=True)
+    gift = args[0]
+    if gift not in GIFT_DICT.keys():
+        await bot.finish(ev, '请输入正确的道具名', at_sender=True)
+    gfid = GIFT_DICT[gift]
+    if duel._get_gift_num(gid,uid,gfid)==0:
+        await bot.finish(ev, '你未持有这个道具哦。', at_sender=True)
+    if gfid <= 10:
+        await bot.finish(ev, '请输入正确的道具名。', at_sender=True)
+    if gfid in CTUSE:
+        await bot.finish(ev, '这件道具不能这么使用。', at_sender=True)
+    if gfid == 14:
+        if len(args)!=2:
+            await bot.finish(ev, '请输入 使用道具+道具名+目标名 中间用空格隔开。', at_sender=True)
+        name = args[1]
+        cid = chara.name2id(name)
+        if cid == 1000:
+            await bot.finish(ev, '请输入正确的女友名。', at_sender=True)
+        owner = duel._get_card_owner(gid, cid)
+        c = chara.fromid(cid)
+        if owner == 0:
+            await bot.send(ev, f'{c.name}还是单身哦，无法使用。', at_sender=True)
+            return 
+        duel._reduce_gift(gid,uid,gfid)
+        if duel._get_gift_num(gid,owner,13)==0:
+            msg = f'\n你使用了陷害卡，{c.name}与他的持有者[CQ:at,qq={owner}]的好感度降低了30！\n{c.icon.cqcode}'
+            duel._reduce_favor(gid,owner,cid,30)
+        else:
+            msg = f'\n你使用了陷害卡，但对方使用无懈卡使你的道具无效了！'
+            duel._reduce_gift(gid,owner,13)
+        await bot.send(ev, msg, at_sender=True)
+    if gfid == 15:
+        await bot.finish(ev, '还不允许使用哦！', at_sender=True)
+#        if len(args)!=2:
+#            await bot.finish(ev, '请输入 使用道具+道具名+目标名 中间用空格隔开。', at_sender=True)
+#        name = args[1]
+#        cid = chara.name2id(name)
+#        if cid == 1000:
+#            await bot.finish(ev, '请输入正确的女友名。', at_sender=True)
+#        level = duel._get_level(gid, uid)
+#        noblename = get_noblename(level)
+#        girlnum = get_girlnum_buy(gid,uid)
+#        cidlist = duel._get_cards(gid, uid)
+#        cidnum = len(cidlist)
+#        if cidnum >= girlnum:
+#            msg = '您的女友已经满了哦，无法使用这个道具，快点发送[升级贵族]进行升级吧。'
+#            await bot.send(ev, msg, at_sender=True)
+#            return
+#        owner = duel._get_card_owner(gid, cid)
+#        c = chara.fromid(cid)
+#        if owner != 0:
+#            await bot.send(ev, f'{c.name}不是单身哦，无法使用。', at_sender=True)
+#            return 
+#        duel._reduce_gift(gid,uid,gfid)
+#        msg = f'\n你使用了指定招募卡，{c.name}成为了你的女友\n{c.icon.cqcode}'
+#        duel._add_card(gid, uid, cid)
+#        await bot.send(ev, msg, at_sender=True)  
