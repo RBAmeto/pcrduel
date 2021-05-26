@@ -674,11 +674,9 @@ async def noblelogin(bot, ev: CQEvent):
         nvmes = get_nv_icon(cid)
         msg +=f'\n\n今天向您请安的是\n{c.name}{nvmes}'   
     #随机获得一件礼物
-    select_gift = random.choice(list(GIFT_DICT.keys()))
-    gfid = GIFT_DICT[select_gift]
-    while(gfid <= 10) or (gfid >= 15):
-            select_gift = random.choice(list(GIFT_DICT.keys()))
-            gfid = GIFT_DICT[select_gift]
+    new_dict = {v : k for k, v in GIFT_DICT.items()}
+    gfid = random.choice((11,12,13,14))
+    select_gift = new_dict[gfid]
     duel._add_gift(gid,uid,gfid)
     msg +=f'\n随机获得了礼物[{select_gift}]'
     await bot.send(ev, msg, at_sender=True)

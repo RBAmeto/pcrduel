@@ -529,11 +529,9 @@ async def add_duiwu_t(bot, ev: CQEvent):
                     break
             gift_list = ''
             for x in range(dun_get_favor):
-                select_gift = random.choice(list(GIFT_DICT.keys()))
-                gfid = GIFT_DICT[select_gift]
-                while(gfid >= 10):
-                    select_gift = random.choice(list(GIFT_DICT.keys()))
-                    gfid = GIFT_DICT[select_gift]
+                new_dict = {v : k for k, v in GIFT_DICT.items()}
+                gfid = random.choice((1,2,3,4,5,6,7,8,9))
+                select_gift = new_dict[gfid]
                 duel._add_gift(gid,uid,gfid)
                 gift_list = gift_list + f"[{select_gift}] "
             msg = msg + f'获得了礼物:{gift_list}\n'
