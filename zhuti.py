@@ -676,7 +676,7 @@ async def noblelogin(bot, ev: CQEvent):
     #随机获得一件礼物
     select_gift = random.choice(list(GIFT_DICT.keys()))
     gfid = GIFT_DICT[select_gift]
-    while(gfid == 15):
+    while(gfid <= 10) or (gfid >= 15):
             select_gift = random.choice(list(GIFT_DICT.keys()))
             gfid = GIFT_DICT[select_gift]
     duel._add_gift(gid,uid,gfid)
@@ -1220,6 +1220,7 @@ async def nobleduel(bot, ev: CQEvent):
     gid = ev.group_id
     duel_judger.turn_on(gid)
     duel = DuelCounter()
+    args = ev.message.extract_plain_text().split()
     score_counter = ScoreCounter2()
     id1 = ev.user_id
     duel = DuelCounter()
@@ -1291,7 +1292,7 @@ async def nobleduel(bot, ev: CQEvent):
     await bot.send(ev, msg)
     await asyncio.sleep(WAIT_TIME)
     duel_judger.turn_off_accept(gid)
-    if duel_judger.get_isaccept(gid) is False:
+    if duel_judger.get_isaccept(gid) is False and force != 1:
         msg = '决斗被拒绝。'
         duel_judger.turn_off(gid)
         await bot.send(ev, msg, at_sender=True)
@@ -1391,76 +1392,87 @@ async def nobleduel(bot, ev: CQEvent):
             fashion_info = get_fashion_info(up_info)
             nvmes = fashion_info['icon']
         bd_msg = f"\n您绑定的女友{bd_info.name}获得了{WIN_EXP}点经验，{card_level[2]}\n{nvmes}"
-
-    #判定被输掉的是否是复制人可可萝，是则换成金币。
-    if selected_girl==9999:
-        score_counter._add_score(gid, winner, 300)
-        c = chara.fromid(1059)
-        nvmes = get_nv_icon(1059)
-        duel._delete_card(gid, loser, selected_girl)
-        msg = f'[CQ:at,qq={winner}]\n您赢得了神秘的可可萝，但是她微笑着消失了。\n本次决斗获得了300金币。'
-        await bot.send(ev, msg)
-        msg = f'[CQ:at,qq={loser}]\n您输掉了贵族决斗，被抢走了女友\n{c.name}，\n只要招募，她就还会来到你的身边哦。{nvmes}'
-        await bot.send(ev, msg)
-
-    #判断被输掉的是否为妻子。    
-    elif selected_girl==queen:
-        score_counter._add_score(gid, winner, 1000)
-        msg = f'[CQ:at,qq={winner}]您赢得的角色为对方的妻子，\n您改为获得1000金币。'
-        await bot.send(ev, msg)
-        score_counter._reduce_prestige(gid,loser,300)
-        msg = f'[CQ:at,qq={loser}]您差点输掉了妻子，额外失去了300声望。'
-        await bot.send(ev, msg)
         
-    #判断被输掉的是否为绑定经验获取角色。    
-    elif selected_girl==bangdinlose:
-        score_counter._add_score(gid, winner, 1000)
-        msg = f'[CQ:at,qq={winner}]您赢得的角色为对方的绑定女友，\n您改为获得2000金币。'
-        await bot.send(ev, msg)
-        score_counter._reduce_prestige(gid,loser,500)
-        msg = f'[CQ:at,qq={loser}]您差点输掉了绑定女友，额外失去了500声望。'
-        await bot.send(ev, msg)
-
-
-    elif girl_outlimit(gid,winner):
-        score_counter._add_score(gid, winner, 1000)
-        msg = f'[CQ:at,qq={winner}]您的女友超过了爵位上限，\n本次决斗获得了300金币。'
-        c = chara.fromid(selected_girl)
-        #判断好感是否足够，足够则扣掉好感
-        favor = duel._get_favor(gid,loser,selected_girl)
-        if favor>=favor_reduce:
-            c = chara.fromid(selected_girl)
-            duel._reduce_favor(gid,loser,selected_girl,favor_reduce)
-            msg = f'[CQ:at,qq={loser}]您输掉了贵族决斗，您与{c.name}的好感下降了50点。\n{c.icon.cqcode}'
-            await bot.send(ev, msg)            
-        else:
-            duel._delete_card(gid, loser, selected_girl)
-            msg = f'[CQ:at,qq={loser}]您输掉了贵族决斗且对方超过了爵位上限，您的女友恢复了单身。\n{c.name}{c.icon.cqcode}'
-            await bot.send(ev, msg)
-
-    else:
-        #判断好感是否足够，足够则扣掉好感
-        favor = duel._get_favor(gid,loser,selected_girl)    
-        if favor>=favor_reduce:
-            duel._reduce_favor(gid,loser,selected_girl,favor_reduce)
-            msg = f'[CQ:at,qq={loser}]您输掉了贵族决斗，您与{c.name}的好感下降了50点。\n{c.icon.cqcode}'
-            await bot.send(ev, msg)      
+    baohu = 0
+    if duel._get_gift_num(gid,loser,12) !=0:
+        baohu = 1
+    #判定被输掉的是否是复制人可可萝，是则换成金币。
+    if baohu == 0:
+    #判定被输掉的是否是复制人可可萝，是则换成金币。
+        if selected_girl==9999:
             score_counter._add_score(gid, winner, 300)
-            msg = f'[CQ:at,qq={winner}]您赢得了决斗，对方女友仍有一定好感。\n本次决斗获得了300金币。'
-            await bot.send(ev, msg)  
-        else:
-            c = chara.fromid(selected_girl)
+            c = chara.fromid(1059)
+            nvmes = get_nv_icon(1059)
             duel._delete_card(gid, loser, selected_girl)
-            duel._add_card(gid, winner, selected_girl)
-            msg = f'[CQ:at,qq={loser}]您输掉了贵族决斗，您被抢走了女友\n{c.name}{c.icon.cqcode}'
+            msg = f'[CQ:at,qq={winner}]\n您赢得了神秘的可可萝，但是她微笑着消失了。\n本次决斗获得了300金币。'
             await bot.send(ev, msg)
-        #判断赢家的角色列表里是否有复制人可可萝。
-            wincidlist = duel._get_cards(gid, winner)
-            if 9999 in wincidlist:
-                duel._delete_card(gid, winner, 9999)
-                score_counter._add_score(gid, winner, 300)
-                msg = f'[CQ:at,qq={winner}]\n“主人有了女友已经不再孤单了，我暂时离开了哦。”\n您赢得了{c.name},可可萝微笑着消失了。\n您获得了300金币。'
+            msg = f'[CQ:at,qq={loser}]\n您输掉了贵族决斗，被抢走了女友\n{c.name}，\n只要招募，她就还会来到你的身边哦。{nvmes}'
+            await bot.send(ev, msg)
+
+        #判断被输掉的是否为妻子。    
+        elif selected_girl==queen:
+            score_counter._add_score(gid, winner, 1000)
+            msg = f'[CQ:at,qq={winner}]您赢得的角色为对方的妻子，\n您改为获得1000金币。'
+            await bot.send(ev, msg)
+            score_counter._reduce_prestige(gid,loser,300)
+            msg = f'[CQ:at,qq={loser}]您差点输掉了妻子，额外失去了300声望。'
+            await bot.send(ev, msg)
+            
+        #判断被输掉的是否为绑定经验获取角色。    
+        elif selected_girl==bangdinlose:
+            score_counter._add_score(gid, winner, 1000)
+            msg = f'[CQ:at,qq={winner}]您赢得的角色为对方的绑定女友，\n您改为获得2000金币。'
+            await bot.send(ev, msg)
+            score_counter._reduce_prestige(gid,loser,500)
+            msg = f'[CQ:at,qq={loser}]您差点输掉了绑定女友，额外失去了500声望。'
+            await bot.send(ev, msg)
+
+
+        elif girl_outlimit(gid,winner):
+            score_counter._add_score(gid, winner, 1000)
+            msg = f'[CQ:at,qq={winner}]您的女友超过了爵位上限，\n本次决斗获得了300金币。'
+            c = chara.fromid(selected_girl)
+            #判断好感是否足够，足够则扣掉好感
+            favor = duel._get_favor(gid,loser,selected_girl)
+            if favor>=favor_reduce:
+                c = chara.fromid(selected_girl)
+                duel._reduce_favor(gid,loser,selected_girl,favor_reduce)
+                msg = f'[CQ:at,qq={loser}]您输掉了贵族决斗，您与{c.name}的好感下降了50点。\n{c.icon.cqcode}'
+                await bot.send(ev, msg)            
+            else:
+                duel._delete_card(gid, loser, selected_girl)
+                msg = f'[CQ:at,qq={loser}]您输掉了贵族决斗且对方超过了爵位上限，您的女友恢复了单身。\n{c.name}{c.icon.cqcode}'
                 await bot.send(ev, msg)
+
+        else:
+            #判断好感是否足够，足够则扣掉好感
+            favor = duel._get_favor(gid,loser,selected_girl)    
+            if favor>=favor_reduce:
+                duel._reduce_favor(gid,loser,selected_girl,favor_reduce)
+                msg = f'[CQ:at,qq={loser}]您输掉了贵族决斗，您与{c.name}的好感下降了50点。\n{c.icon.cqcode}'
+                await bot.send(ev, msg)      
+                score_counter._add_score(gid, winner, 300)
+                msg = f'[CQ:at,qq={winner}]您赢得了决斗，对方女友仍有一定好感。\n本次决斗获得了300金币。'
+                await bot.send(ev, msg)  
+            else:
+                c = chara.fromid(selected_girl)
+                duel._delete_card(gid, loser, selected_girl)
+                duel._add_card(gid, winner, selected_girl)
+                msg = f'[CQ:at,qq={loser}]您输掉了贵族决斗，您被抢走了女友\n{c.name}{c.icon.cqcode}'
+                await bot.send(ev, msg)
+            #判断赢家的角色列表里是否有复制人可可萝。
+                wincidlist = duel._get_cards(gid, winner)
+                if 9999 in wincidlist:
+                    duel._delete_card(gid, winner, 9999)
+                    score_counter._add_score(gid, winner, 300)
+                    msg = f'[CQ:at,qq={winner}]\n“主人有了女友已经不再孤单了，我暂时离开了哦。”\n您赢得了{c.name},可可萝微笑着消失了。\n您获得了300金币。'
+                    await bot.send(ev, msg)
+    else:
+        msg = f'[CQ:at,qq={winner}]\n对方使用了保护卡，您没能抢夺到对方的女友。'
+        await bot.send(ev, msg)
+        msg = f'[CQ:at,qq={loser}]\n您使用了保护卡，本次决斗未损失女友'
+        await bot.send(ev, msg)
+        duel._reduce_gift(gid,loser,12)
 
     #判断胜者败者是否需要增减声望
     level_loser = duel._get_level(gid, loser)
