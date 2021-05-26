@@ -329,9 +329,11 @@ cloverlist = range(7300,7307)
 majsoullist = range(7400,7476)
 noranekolist = range(7500,7510)
 vtuberlist = range(7700,7847)
-vtuberlist2 = range(12000,12107)
+vtuberlist2 = range(12000,12100)
+hololist = range(12101,12143)
 fgolist = range(8001,8301)
 umalist = range(11100,11174)
+shinycolorslist = range(2830101,2839902)
 
 
 
@@ -356,7 +358,9 @@ dlcdict = {
         'vtuber':vtuberlist,
         'vtuber2':vtuberlist2,
         'arknights':arklist,
-        'umamusume':umalist
+        'umamusume':umalist,
+        'holo':hololist,
+        'shinycolors':shinycolorslist
         }
 
 
@@ -381,9 +385,11 @@ dlcintro = {
         'noraneko':'ノラと皇女と野良猫ハート角色包' ,
         'fgo':'FGO手游角色包',        
         'arknights':'明日方舟角色包',
-        'umamusume':'赛马娘角色包'
+        'umamusume':'赛马娘角色包',
+        'holo':'Hololive角色包',
+        'shinycolors':'偶像大师闪耀色彩角色包'
         }
-
+        
 # noinspection SqlResolve
 class RecordDAO:
     def __init__(self, db_path):
