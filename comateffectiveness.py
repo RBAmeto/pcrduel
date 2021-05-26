@@ -531,6 +531,9 @@ async def add_duiwu_t(bot, ev: CQEvent):
             for x in range(dun_get_favor):
                 select_gift = random.choice(list(GIFT_DICT.keys()))
                 gfid = GIFT_DICT[select_gift]
+                while(gfid >= 10):
+                    select_gift = random.choice(list(GIFT_DICT.keys()))
+                    gfid = GIFT_DICT[select_gift]
                 duel._add_gift(gid,uid,gfid)
                 gift_list = gift_list + f"[{select_gift}] "
             msg = msg + f'获得了礼物:{gift_list}\n'
